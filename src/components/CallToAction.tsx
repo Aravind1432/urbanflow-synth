@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Download, PlayCircle } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 const CallToAction = () => {
   return (
@@ -30,23 +30,13 @@ const CallToAction = () => {
             Join thousands of citizens already experiencing smarter, safer, and more connected urban living through AI.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
+          <div className="flex justify-center items-center mb-16">
             <Button 
               size="lg"
               className="bg-gradient-primary hover:opacity-90 text-primary-foreground font-semibold px-10 py-7 text-lg shadow-glow-primary hover:scale-105 transition-all"
             >
-              <Download className="mr-2 h-5 w-5" />
-              Download the App
+              Get Started with AetherAi
               <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            
-            <Button 
-              size="lg"
-              variant="outline"
-              className="border-primary text-primary hover:bg-primary/10 px-10 py-7 text-lg hover:scale-105 transition-all"
-            >
-              <PlayCircle className="mr-2 h-5 w-5" />
-              Watch Demo
             </Button>
           </div>
 

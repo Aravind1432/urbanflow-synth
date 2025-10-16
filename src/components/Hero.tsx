@@ -59,16 +59,8 @@ const Hero = () => {
             className="bg-gradient-primary hover:opacity-90 text-primary-foreground font-semibold px-8 py-6 text-lg shadow-glow-primary transition-all hover:scale-105"
           >
             <Map className="mr-2 h-5 w-5" />
-            Explore Live Map
+            Explore AetherAi
             <ArrowRight className="ml-2 h-5 w-5" />
-          </Button>
-          
-          <Button 
-            size="lg"
-            variant="outline"
-            className="border-primary text-primary hover:bg-primary/10 px-8 py-6 text-lg transition-all hover:scale-105"
-          >
-            Learn More
           </Button>
         </div>
 
