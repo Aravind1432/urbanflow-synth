@@ -1,13 +1,20 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import Hero from "@/components/Hero";
+import DataFusionSection from "@/components/DataFusionSection";
+import CitizenReporting from "@/components/CitizenReporting";
+import HowItWorks from "@/components/HowItWorks";
+import ImpactMetrics from "@/components/ImpactMetrics";
+import CallToAction from "@/components/CallToAction";
 
 const Index = () => {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
-    </div>
+    <main className="min-h-screen">
+      <Hero />
+      <DataFusionSection />
+      <CitizenReporting />
+      <HowItWorks />
+      <ImpactMetrics />
+      <CallToAction />
+    </main>
   );
 };
 
