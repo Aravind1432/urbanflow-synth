@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Moon, Sun, User } from "lucide-react";
 import { useTheme } from "next-themes";
+import thunderLogo from "@/assets/thunder-logo.png";
 
 const Header = () => {
   const { theme, setTheme } = useTheme();
@@ -9,7 +10,7 @@ const Header = () => {
     <header className="fixed top-0 left-0 right-0 z-50 bg-transparent backdrop-blur-sm">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-primary" />
+          <img src={thunderLogo} alt="AetherAi Logo" className="w-8 h-8" />
           <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-primary">
             AetherAi
           </span>
