@@ -31,6 +31,18 @@ export default {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
         },
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))",
+        },
+        warning: {
+          DEFAULT: "hsl(var(--warning))",
+          foreground: "hsl(var(--warning-foreground))",
+        },
+        blue: {
+          DEFAULT: "hsl(var(--blue))",
+          foreground: "hsl(var(--blue-foreground))",
+        },
         muted: {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",
@@ -47,15 +59,25 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        particle: {
+          1: "hsl(var(--particle-1))",
+          2: "hsl(var(--particle-2))",
+          3: "hsl(var(--particle-3))",
+        },
       },
       backgroundImage: {
         'gradient-primary': 'var(--gradient-primary)',
+        'gradient-secondary': 'var(--gradient-secondary)',
         'gradient-accent': 'var(--gradient-accent)',
-        'gradient-dark': 'var(--gradient-dark)',
+        'gradient-mesh': 'var(--gradient-mesh)',
       },
       boxShadow: {
         'glow-primary': 'var(--glow-primary)',
         'glow-accent': 'var(--glow-accent)',
+        'glow-secondary': 'var(--glow-secondary)',
+      },
+      backdropBlur: {
+        'xs': '2px',
       },
       borderRadius: {
         lg: "var(--radius)",
