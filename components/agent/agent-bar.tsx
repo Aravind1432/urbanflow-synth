@@ -22,7 +22,13 @@ export function AgentBar() {
   const setAgentMode = useSettingsStore((s) => s.setAgentMode);
 
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Track client-side mount to prevent hydration mismatch
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const allAgents = listAgents();
   // In preset mode, only show default (non-generated) agents
@@ -80,7 +86,20 @@ export function AgentBar() {
   };
 
   /* ── Shared avatar row — always visible on the right side ── */
-  const avatarRow = (
+  const avatarRow = !mounted ? (
+    // Render placeholder during SSR/initial hydration to prevent mismatch
+    <div className="flex items-center gap-1.5 shrink-0">
+      {teacherAgent && (
+        <div className="size-8 rounded-full overflow-hidden ring-2 ring-blue-400/40 dark:ring-blue-500/30 shrink-0">
+          <img
+            src={teacherAgent.avatar}
+            alt={getAgentName(teacherAgent)}
+            className="size-full object-cover"
+          />
+        </div>
+      )}
+    </div>
+  ) : (
     <div className="flex items-center gap-1.5 shrink-0">
       {/* Teacher avatar — always shown */}
       {teacherAgent && (
@@ -153,7 +172,7 @@ export function AgentBar() {
             onClick={() => setOpen(!open)}
           >
             {/* Left side — text changes based on open/close */}
-            <span className="text-xs text-muted-foreground/60 group-hover:text-muted-foreground transition-colors hidden sm:block font-medium flex-1 text-left">
+            <span className="text-xs text-muted-foreground/60 group-hover:text-muted-foreground transition-colors hidden sm:block font-medium flex-1 text-left" suppressHydrationWarning>
               {open ? t('agentBar.expandedTitle') : t('agentBar.readyToLearn')}
             </span>
 
@@ -170,7 +189,7 @@ export function AgentBar() {
         </TooltipTrigger>
         {!open && (
           <TooltipContent side="bottom" sideOffset={4}>
-            {t('agentBar.configTooltip')}
+            <span suppressHydrationWarning>{t('agentBar.configTooltip')}</span>
           </TooltipContent>
         )}
       </Tooltip>
@@ -196,6 +215,7 @@ export function AgentBar() {
                       ? 'bg-background shadow-sm text-foreground'
                       : 'text-muted-foreground hover:text-foreground',
                   )}
+                  suppressHydrationWarning
                 >
                   {t('settings.agentModePreset')}
                 </button>
@@ -207,6 +227,7 @@ export function AgentBar() {
                       ? 'bg-background shadow-sm text-foreground'
                       : 'text-muted-foreground hover:text-foreground',
                   )}
+                  suppressHydrationWarning
                 >
                   <Sparkles className="h-3 w-3" />
                   {t('settings.agentModeAuto')}
@@ -243,7 +264,7 @@ export function AgentBar() {
                             />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <div className="text-sm font-medium flex items-center gap-1.5">
+                            <div className="text-sm font-medium flex items-center gap-1.5" suppressHydrationWarning>
                               {getAgentName(agent)}
                               <span className="text-[10px] text-muted-foreground/50 font-normal">
                                 {getAgentRole(agent)}
@@ -253,7 +274,7 @@ export function AgentBar() {
                               const descKey = `settings.agentDescriptions.${agent.id}`;
                               const desc = t(descKey);
                               return desc !== descKey ? (
-                                <p className="text-xs text-muted-foreground/60 mt-0.5 leading-relaxed">
+                                <p className="text-xs text-muted-foreground/60 mt-0.5 leading-relaxed" suppressHydrationWarning>
                                   {desc}
                                 </p>
                               ) : null;
@@ -275,7 +296,7 @@ export function AgentBar() {
                     {/* Icon */}
                     <Shuffle className="relative size-7 text-violet-400 dark:text-violet-500" />
                   </div>
-                  <p className="text-xs text-muted-foreground text-center">
+                  <p className="text-xs text-muted-foreground text-center" suppressHydrationWarning>
                     {t('settings.agentModeAutoDesc')}
                   </p>
                 </div>
@@ -283,7 +304,7 @@ export function AgentBar() {
 
               {/* Max turns — always visible */}
               <div className="pt-2.5 mt-2.5 border-t flex items-center gap-3">
-                <span className="text-xs text-muted-foreground shrink-0">
+                <span className="text-xs text-muted-foreground shrink-0" suppressHydrationWarning>
                   {t('settings.maxTurns')}
                 </span>
                 <Input

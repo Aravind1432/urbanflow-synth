@@ -13,8 +13,22 @@ import { generateWithSeedream, testSeedreamConnectivity } from './adapters/seedr
 import { generateWithQwenImage, testQwenImageConnectivity } from './adapters/qwen-image-adapter';
 import { generateWithNanoBanana, testNanoBananaConnectivity } from './adapters/nano-banana-adapter';
 import { generateWithGrokImage, testGrokImageConnectivity } from './adapters/grok-image-adapter';
+import { generateWithNvidiaImage, testNvidiaImageConnectivity } from './adapters/nvidia-image-adapter';
 
 export const IMAGE_PROVIDERS: Record<ImageProviderId, ImageProviderConfig> = {
+  'nvidia-image': {
+    id: 'nvidia-image',
+    name: 'NVIDIA (FLUX.1, SDXL)',
+    requiresApiKey: true,
+    defaultBaseUrl: 'https://ai.api.nvidia.com/v1/genai',
+    models: [
+      { id: 'black-forest-labs/flux-1-dev', name: 'FLUX.1 Dev (High Quality)' },
+      { id: 'stabilityai/stable-diffusion-xl', name: 'Stable Diffusion XL' },
+      { id: 'stabilityai/stable-diffusion-3-medium', name: 'Stable Diffusion 3 Medium' },
+      { id: 'playgroundai/playground-v2.5', name: 'Playground v2.5 (Fast)' },
+    ],
+    supportedAspectRatios: ['16:9', '4:3', '1:1', '9:16'],
+  },
   seedream: {
     id: 'seedream',
     name: 'Seedream',
@@ -84,6 +98,8 @@ export async function testImageConnectivity(
   config: ImageGenerationConfig,
 ): Promise<{ success: boolean; message: string }> {
   switch (config.providerId) {
+    case 'nvidia-image':
+      return testNvidiaImageConnectivity(config);
     case 'seedream':
       return testSeedreamConnectivity(config);
     case 'qwen-image':
@@ -105,6 +121,8 @@ export async function generateImage(
   options: ImageGenerationOptions,
 ): Promise<ImageGenerationResult> {
   switch (config.providerId) {
+    case 'nvidia-image':
+      return generateWithNvidiaImage(config, options);
     case 'seedream':
       return generateWithSeedream(config, options);
     case 'qwen-image':
