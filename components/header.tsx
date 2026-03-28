@@ -163,8 +163,6 @@ export function Header({ currentSceneTitle }: HeaderProps) {
             )}
           </div>
 
-          <div className="w-[1px] h-4 bg-gray-200 dark:bg-gray-700" />
-
           {/* Theme Selector */}
           <div className="relative" ref={themeRef}>
             <button
@@ -172,7 +170,14 @@ export function Header({ currentSceneTitle }: HeaderProps) {
                 setThemeOpen(!themeOpen);
                 setLanguageOpen(false);
               }}
-              className="p-2 rounded-full text-gray-400 dark:text-gray-500 hover:bg-white dark:hover:bg-gray-700 hover:text-gray-800 dark:hover:text-gray-200 hover:shadow-sm transition-all group"
+              className="p-2 rounded-lg transition-all group"
+              style={{
+                background: '#111122',
+                border: '1px solid rgba(255,255,255,0.08)',
+                color: '#888899',
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(124,58,237,0.15)')}
+              onMouseLeave={(e) => (e.currentTarget.style.background = '#111122')}
             >
               {theme === 'light' && <Sun className="w-4 h-4" />}
               {theme === 'dark' && <Moon className="w-4 h-4" />}
