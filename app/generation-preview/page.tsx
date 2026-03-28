@@ -824,14 +824,25 @@ function GenerationPreviewContent() {
   const completedUISteps = Math.min(currentUIStep, 4);
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-center relative" style={{ backgroundColor: '#080810' }}>
-      {/* Background gradient glow */}
+    <div className="min-h-screen w-full flex flex-col items-center justify-center relative premium-bg premium-grid">
+      {/* Background gradient glows */}
       <div 
         className="fixed inset-0 pointer-events-none" 
         style={{
-          background: 'radial-gradient(ellipse at 50% 40%, rgba(109,40,217,0.15) 0%, transparent 60%)'
+          background: `
+            radial-gradient(ellipse at 50% 30%, rgba(124,58,237,0.15) 0%, transparent 55%),
+            radial-gradient(ellipse at 30% 70%, rgba(99,102,241,0.08) 0%, transparent 50%),
+            radial-gradient(ellipse at 70% 60%, rgba(168,85,247,0.06) 0%, transparent 45%)
+          `
         }}
       />
+      
+      {/* Floating shapes */}
+      <div className="floating-shapes">
+        <div className="floating-shape geo-float-1 w-12 h-12 rotate-12" style={{ top: '15%', left: '10%', borderColor: 'rgba(124,58,237,0.06)' }} />
+        <div className="floating-shape geo-float-2 w-8 h-8 rounded-full" style={{ top: '30%', right: '15%', borderColor: 'rgba(168,85,247,0.08)' }} />
+        <div className="floating-shape geo-float-3 w-16 h-16" style={{ bottom: '25%', left: '20%', borderColor: 'rgba(99,102,241,0.05)' }} />
+      </div>
 
       {/* Back button - Top left */}
       <button
@@ -857,19 +868,23 @@ function GenerationPreviewContent() {
         </div>
 
         {/* Status text below brain */}
-        <div className="text-center space-y-2">
-          <h2 className="text-[20px] font-bold text-white">
+        <div className="text-center space-y-3">
+          <h2 className="text-[22px] font-bold bg-gradient-to-r from-white via-purple-200 to-white bg-clip-text text-transparent">
             {UI_STEPS[currentUIStep].label}
           </h2>
-          <p className="text-[13px]" style={{ color: '#6666AA' }}>
+          <p className="text-[13px] font-medium" style={{ color: '#7777BB' }}>
             {UI_STEPS[currentUIStep].subtitle}
-            <span className="animate-pulse">...</span>
+            <span className="inline-flex gap-0.5 ml-1">
+              <span className="w-1 h-1 rounded-full bg-purple-400 animate-bounce" style={{ animationDelay: '0s' }} />
+              <span className="w-1 h-1 rounded-full bg-purple-400 animate-bounce" style={{ animationDelay: '0.15s' }} />
+              <span className="w-1 h-1 rounded-full bg-purple-400 animate-bounce" style={{ animationDelay: '0.3s' }} />
+            </span>
           </p>
         </div>
 
         {/* Step progress tracker */}
-        <div className="w-full max-w-[600px]">
-          <div className="flex items-center justify-between px-4">
+        <div className="w-full max-w-[620px]">
+          <div className="flex items-center justify-between px-6">
             {UI_STEPS.map((step, idx) => {
               const isPending = idx > currentUIStep;
               const isActive = idx === currentUIStep;
@@ -881,54 +896,57 @@ function GenerationPreviewContent() {
                   {/* Step circle */}
                   <div className="flex flex-col items-center">
                     <div
-                      className={`
-                        relative w-[40px] h-[40px] rounded-full flex items-center justify-center
-                        border-2 transition-all duration-300
-                        ${isPending ? 'border-[#2D2D4E]' : ''}
-                        ${isActive ? 'border-[#7C3AED]' : ''}
-                        ${isCompleted ? 'border-[#A855F7]' : ''}
-                      `}
+                      className={cn(
+                        'relative w-[44px] h-[44px] rounded-full flex items-center justify-center transition-all duration-500',
+                        isPending && 'border-2 border-[#1D1D3A]',
+                        isActive && 'border-2 border-purple-500 gen-step-active',
+                        isCompleted && 'border-2 border-green-500/60 gen-step-complete step-complete-burst',
+                      )}
                       style={{
-                        backgroundColor: isPending ? '#1A1A2E' : isActive ? '#4C1D95' : '#7C3AED',
+                        backgroundColor: isPending ? 'rgba(20,20,40,0.8)' : isActive ? 'rgba(76,29,149,0.8)' : 'rgba(34,197,94,0.15)',
+                        backdropFilter: 'blur(8px)',
                       }}
                     >
                       {isCompleted ? (
-                        <Check className="size-4" style={{ color: 'white' }} />
+                        <Check className="size-4.5 text-green-400" />
                       ) : (
                         <StepIcon 
-                          className="size-4" 
-                          style={{ color: isPending ? '#444466' : 'white' }}
+                          className={cn('size-4', isPending ? 'text-[#333355]' : 'text-white')}
                         />
                       )}
-                      {/* Pulsing ring for active step */}
+                      {/* Active pulsing ring */}
                       {isActive && (
-                        <div className="absolute inset-0 rounded-full animate-ping" style={{
-                          boxShadow: '0 0 0 0 rgba(124,58,237,0.6)',
-                          animation: 'ping 1.2s cubic-bezier(0, 0, 0.2, 1) infinite'
-                        }} />
+                        <>
+                          <div className="absolute inset-[-4px] rounded-full border border-purple-500/30 neural-ring" />
+                          <div className="absolute inset-[-4px] rounded-full border border-purple-500/20 neural-ring" style={{ animationDelay: '0.8s' }} />
+                        </>
                       )}
                     </div>
                     {/* Step label */}
                     <span
-                      className={`mt-2 text-[10px] ${isActive ? 'font-semibold' : ''}`}
+                      className={cn('mt-2.5 text-[10px] tracking-wider uppercase', isActive && 'font-bold')}
                       style={{
-                        color: isPending ? '#2D2D5A' : isActive ? '#A855F7' : '#7C3AED'
+                        color: isPending ? '#2D2D5A' : isActive ? '#A855F7' : '#22C55E'
                       }}
                     >
                       {step.label}
                     </span>
                   </div>
 
-                  {/* Connector line between steps */}
+                  {/* Connector line */}
                   {idx < UI_STEPS.length - 1 && (
                     <div 
-                      className="flex-1 h-[2px] mx-2 transition-all duration-600"
+                      className="flex-1 h-[2px] mx-3 rounded-full transition-all duration-700 relative overflow-hidden"
                       style={{
                         background: idx < currentUIStep 
-                          ? 'linear-gradient(90deg, #7C3AED, #A855F7)'
+                          ? 'linear-gradient(90deg, #22C55E, #7C3AED)'
                           : '#1A1A2E'
                       }}
-                    />
+                    >
+                      {idx === currentUIStep - 1 && (
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent" style={{ animation: 'shimmer 1.5s ease-in-out infinite' }} />
+                      )}
+                    </div>
                   )}
                 </div>
               );
@@ -936,22 +954,22 @@ function GenerationPreviewContent() {
           </div>
         </div>
 
-        {/* Estimated time */}
-        <div className="flex items-center gap-2 text-[11px]" style={{ color: '#444466' }}>
-          <Loader2 className="size-3 animate-spin" />
-          <span>Estimated time remaining: ~2 min</span>
+        {/* Estimated time + Cancel */}
+        <div className="flex flex-col items-center gap-3">
+          <div className="flex items-center gap-2 text-[11px] px-4 py-2 rounded-full" style={{ background: 'rgba(124,58,237,0.08)', border: '1px solid rgba(124,58,237,0.12)', color: '#6666AA' }}>
+            <Loader2 className="size-3 animate-spin" />
+            <span>Estimated time remaining: ~2 min</span>
+          </div>
+          <button
+            onClick={handleAbortGeneration}
+            className="text-[12px] transition-all duration-200 px-4 py-1.5 rounded-full hover:bg-red-500/10"
+            style={{ color: '#555577' }}
+            onMouseEnter={(e) => { e.currentTarget.style.color = '#FF6B6B'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = '#555577'; }}
+          >
+            Cancel generation
+          </button>
         </div>
-
-        {/* Cancel button */}
-        <button
-          onClick={handleAbortGeneration}
-          className="text-[12px] transition-colors"
-          style={{ color: '#444466' }}
-          onMouseEnter={(e) => e.currentTarget.style.color = '#888899'}
-          onMouseLeave={(e) => e.currentTarget.style.color = '#444466'}
-        >
-          Cancel generation
-        </button>
       </div>
 
       {/* Agent reveal modal */}
