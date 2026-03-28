@@ -78,24 +78,32 @@ export function CanvasArea({
   );
 
   return (
-    <div className="w-full h-full flex flex-col bg-gray-50 dark:bg-gray-900 group/canvas">
+    <div className="w-full h-full flex flex-col group/canvas" style={{ background: 'var(--cr-base, #07070F)' }}>
       {/* Slide area — takes remaining space */}
       <div
-        className={cn(
-          'flex-1 min-h-0 relative overflow-hidden flex items-center justify-center p-2 transition-colors duration-500',
-          currentScene?.type === 'interactive'
-            ? 'bg-blue-50/30 dark:bg-blue-900/10'
-            : 'bg-gray-50/30 dark:bg-gray-900/30',
-        )}
+        className="flex-1 min-h-0 relative overflow-hidden flex items-center justify-center p-6 transition-colors duration-500"
       >
+        {/* Purple ambient glow behind slide */}
+        <div
+          className="absolute pointer-events-none"
+          style={{
+            inset: '-40px',
+            zIndex: 0,
+            background: 'radial-gradient(ellipse at 50% 50%, rgba(124,58,237,0.12) 0%, transparent 65%)',
+            filter: 'blur(40px)',
+          }}
+        />
         <div
           className={cn(
-            'aspect-[16/9] h-full max-h-full max-w-full bg-white dark:bg-gray-800 shadow-2xl rounded-lg overflow-hidden relative transition-all duration-700',
+            'aspect-[16/9] h-full max-h-full max-w-full bg-white rounded-[20px] overflow-hidden relative transition-all duration-700',
             showControls && !isLiveSession && currentScene?.type === 'slide' && 'cursor-pointer',
-            currentScene?.type === 'interactive'
-              ? 'shadow-blue-200/50 dark:shadow-blue-900/50 ring-1 ring-blue-900/5 dark:ring-blue-500/10'
-              : 'shadow-gray-200/50 dark:shadow-gray-800/50 ring-1 ring-gray-950/5 dark:ring-white/5',
           )}
+          style={{
+            zIndex: 1,
+            maxWidth: '820px',
+            maxHeight: '520px',
+            boxShadow: '0 0 0 1px rgba(124,58,237,0.2), 0 20px 80px rgba(0,0,0,0.6), 0 0 120px rgba(124,58,237,0.08)',
+          }}
           onClick={handleSlideClick}
         >
           {/* Whiteboard Layer */}
