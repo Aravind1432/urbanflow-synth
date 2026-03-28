@@ -1,0 +1,8 @@
+{
+  "name": "fix-page",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "fix": "node ./fix-file.js"
+  }
+}

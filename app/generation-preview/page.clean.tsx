@@ -817,8 +817,8 @@ function GenerationPreviewContent() {
 
   // Map current step to UI step (0-4)
   const currentUIStep = mapToUIStep(
-    activeStep.id, 
-    currentStepIndex, 
+    activeStep.id,
+    currentStepIndex,
     activeSteps.length
   );
   const completedUISteps = Math.min(currentUIStep, 4);
@@ -847,7 +847,7 @@ function GenerationPreviewContent() {
 
       {/* Main content container */}
       <div className="z-10 flex flex-col items-center justify-center space-y-12">
-        {/* 3D Brain Canvas - Import will be added */}
+        {/* 3D Brain Canvas */}
         <div className="w-[380px] h-[380px]">
           {typeof window !== 'undefined' && (
             <Suspense fallback={<div className="w-[380px] h-[380px]" />}>

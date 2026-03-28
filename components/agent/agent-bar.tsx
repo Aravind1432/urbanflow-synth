@@ -88,9 +88,9 @@ export function AgentBar() {
   /* ── Shared avatar row — always visible on the right side ── */
   const avatarRow = !mounted ? (
     // Render placeholder during SSR/initial hydration to prevent mismatch
-    <div className="flex items-center gap-1.5 shrink-0">
+    <div className="flex items-center gap-1 shrink-0">
       {teacherAgent && (
-        <div className="size-8 rounded-full overflow-hidden ring-2 ring-blue-400/40 dark:ring-blue-500/30 shrink-0">
+        <div className="size-7 rounded-full overflow-hidden ring-[1.5px] ring-violet-400/40 shrink-0">
           <img
             src={teacherAgent.avatar}
             alt={getAgentName(teacherAgent)}
@@ -100,10 +100,10 @@ export function AgentBar() {
       )}
     </div>
   ) : (
-    <div className="flex items-center gap-1.5 shrink-0">
+    <div className="flex items-center gap-1 shrink-0">
       {/* Teacher avatar — always shown */}
       {teacherAgent && (
-        <div className="size-8 rounded-full overflow-hidden ring-2 ring-blue-400/40 dark:ring-blue-500/30 shrink-0">
+        <div className="size-7 rounded-full overflow-hidden ring-[1.5px] ring-violet-400/40 shrink-0">
           <img
             src={teacherAgent.avatar}
             alt={getAgentName(teacherAgent)}
@@ -115,9 +115,9 @@ export function AgentBar() {
       {agentMode === 'auto' ? (
         <>
           {/* In auto mode: show assistant avatar + shuffle indicator */}
-          <div className="flex -space-x-2">
+          <div className="flex -space-x-1.5">
             {agents.find((a) => a.role === 'assistant') && (
-              <div className="size-6 rounded-full overflow-hidden ring-[1.5px] ring-background">
+              <div className="size-5 rounded-full overflow-hidden ring-[1px] ring-background">
                 <img
                   src={agents.find((a) => a.role === 'assistant')!.avatar}
                   alt=""
@@ -126,17 +126,17 @@ export function AgentBar() {
               </div>
             )}
           </div>
-          <Shuffle className="size-4 text-violet-400 dark:text-violet-500" />
+          <Shuffle className="size-3.5 text-violet-400" />
         </>
       ) : (
         <>
           {/* In preset mode: show selected non-teacher agents */}
           {nonTeacherSelected.length > 0 && (
-            <div className="flex -space-x-2">
+            <div className="flex -space-x-1.5">
               {nonTeacherSelected.slice(0, 4).map((agent) => (
                 <div
                   key={agent.id}
-                  className="size-6 rounded-full overflow-hidden ring-[1.5px] ring-background"
+                  className="size-5 rounded-full overflow-hidden ring-[1px] ring-background"
                 >
                   <img
                     src={agent.avatar}
@@ -146,8 +146,8 @@ export function AgentBar() {
                 </div>
               ))}
               {nonTeacherSelected.length > 4 && (
-                <div className="size-6 rounded-full bg-muted ring-[1.5px] ring-background flex items-center justify-center">
-                  <span className="text-[9px] font-bold text-muted-foreground">
+                <div className="size-5 rounded-full bg-slate-700 ring-[1px] ring-background flex items-center justify-center">
+                  <span className="text-[8px] font-bold text-gray-400">
                     +{nonTeacherSelected.length - 4}
                   </span>
                 </div>
@@ -160,19 +160,19 @@ export function AgentBar() {
   );
 
   return (
-    <div ref={containerRef} className="relative w-80">
+    <div ref={containerRef} className="relative w-auto max-w-[320px]">
       {/* ── Header row — always in document flow ── */}
       <Tooltip>
         <TooltipTrigger asChild>
           <button
             className={cn(
-              'group flex items-center gap-2 cursor-pointer rounded-full px-2.5 py-2 transition-all w-full',
-              'border border-border/50 text-muted-foreground/70 hover:text-foreground hover:bg-muted/60',
+              'group flex items-center gap-2 cursor-pointer rounded-full px-3.5 py-2 transition-all',
+              'border border-white/10 text-[#888888] hover:text-gray-200 hover:bg-white/5',
             )}
             onClick={() => setOpen(!open)}
           >
             {/* Left side — text changes based on open/close */}
-            <span className="text-xs text-muted-foreground/60 group-hover:text-muted-foreground transition-colors hidden sm:block font-medium flex-1 text-left" suppressHydrationWarning>
+            <span className="text-[12px] text-[#888888] group-hover:text-gray-300 transition-colors sm:block font-medium text-left" suppressHydrationWarning>
               {open ? t('agentBar.expandedTitle') : t('agentBar.readyToLearn')}
             </span>
 
@@ -181,9 +181,9 @@ export function AgentBar() {
 
             {/* Chevron */}
             {open ? (
-              <ChevronUp className="size-3 text-muted-foreground/40 group-hover:text-muted-foreground/70 transition-colors" />
+              <ChevronUp className="size-3 text-gray-500 group-hover:text-gray-400 transition-colors" />
             ) : (
-              <ChevronDown className="size-3 text-muted-foreground/40 group-hover:text-muted-foreground/70 transition-colors" />
+              <ChevronDown className="size-3 text-gray-500 group-hover:text-gray-400 transition-colors" />
             )}
           </button>
         </TooltipTrigger>
@@ -194,26 +194,26 @@ export function AgentBar() {
         )}
       </Tooltip>
 
-      {/* ── Expanded panel (absolute, floating below the header) ── */}
+      {/* ── Expanded panel (absolute, floating above the header) ── */}
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ opacity: 0, y: -4, scale: 0.97 }}
+            initial={{ opacity: 0, y: 4, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -4, scale: 0.97 }}
+            exit={{ opacity: 0, y: 4, scale: 0.97 }}
             transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
-            className="absolute right-0 top-full mt-1 z-50 w-80"
+            className="absolute right-0 bottom-full mb-1 z-50 w-80"
           >
-            <div className="rounded-2xl bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm ring-1 ring-black/[0.04] dark:ring-white/[0.06] shadow-[0_1px_8px_-2px_rgba(0,0,0,0.06)] dark:shadow-[0_1px_8px_-2px_rgba(0,0,0,0.3)] px-2.5 py-2">
+            <div className="rounded-2xl bg-slate-800/95 backdrop-blur-sm ring-1 ring-white/[0.06] shadow-[0_-4px_16px_-2px_rgba(0,0,0,0.3)] px-2.5 py-2">
               {/* Mode tabs — full width, 50/50 */}
-              <div className="flex rounded-lg border bg-muted/30 p-0.5 mb-2.5">
+              <div className="flex rounded-lg border border-white/10 bg-slate-900/50 p-0.5 mb-2.5">
                 <button
                   onClick={() => handleModeChange('preset')}
                   className={cn(
                     'flex-1 py-1.5 text-xs font-medium rounded-md transition-all text-center',
                     agentMode === 'preset'
-                      ? 'bg-background shadow-sm text-foreground'
-                      : 'text-muted-foreground hover:text-foreground',
+                      ? 'bg-slate-700 shadow-sm text-white'
+                      : 'text-gray-400 hover:text-gray-200',
                   )}
                   suppressHydrationWarning
                 >
@@ -224,8 +224,8 @@ export function AgentBar() {
                   className={cn(
                     'flex-1 py-1.5 text-xs font-medium rounded-md transition-all text-center flex items-center justify-center gap-1',
                     agentMode === 'auto'
-                      ? 'bg-background shadow-sm text-foreground'
-                      : 'text-muted-foreground hover:text-foreground',
+                      ? 'bg-slate-700 shadow-sm text-white'
+                      : 'text-gray-400 hover:text-gray-200',
                   )}
                   suppressHydrationWarning
                 >
@@ -247,12 +247,12 @@ export function AgentBar() {
                           onClick={() => toggleAgent(agent.id)}
                           className={cn(
                             'w-full flex items-center gap-3 px-3 py-2 text-left transition-colors cursor-pointer rounded-lg',
-                            isSelected ? 'bg-primary/5' : 'hover:bg-muted/50',
+                            isSelected ? 'bg-teal-500/10' : 'hover:bg-white/5',
                           )}
                         >
                           <Checkbox checked={isSelected} className="pointer-events-none" />
                           <div
-                            className="size-8 rounded-full overflow-hidden shrink-0 ring-1 ring-border/40"
+                            className="size-8 rounded-full overflow-hidden shrink-0 ring-1 ring-white/20"
                             style={{
                               boxShadow: isSelected ? `0 0 0 2px ${agent.color}30` : undefined,
                             }}
@@ -264,9 +264,9 @@ export function AgentBar() {
                             />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <div className="text-sm font-medium flex items-center gap-1.5" suppressHydrationWarning>
+                            <div className="text-sm font-medium text-gray-200 flex items-center gap-1.5" suppressHydrationWarning>
                               {getAgentName(agent)}
-                              <span className="text-[10px] text-muted-foreground/50 font-normal">
+                              <span className="text-[10px] text-gray-500 font-normal">
                                 {getAgentRole(agent)}
                               </span>
                             </div>
@@ -274,7 +274,7 @@ export function AgentBar() {
                               const descKey = `settings.agentDescriptions.${agent.id}`;
                               const desc = t(descKey);
                               return desc !== descKey ? (
-                                <p className="text-xs text-muted-foreground/60 mt-0.5 leading-relaxed" suppressHydrationWarning>
+                                <p className="text-xs text-gray-500 mt-0.5 leading-relaxed" suppressHydrationWarning>
                                   {desc}
                                 </p>
                               ) : null;
@@ -290,21 +290,21 @@ export function AgentBar() {
                   {/* Shuffle icon with ambient animation */}
                   <div className="relative flex items-center justify-center">
                     {/* Ping ripple */}
-                    <div className="absolute size-12 rounded-full bg-violet-400/10 dark:bg-violet-400/15 animate-ping [animation-duration:3s]" />
+                    <div className="absolute size-12 rounded-full bg-teal-400/15 animate-ping [animation-duration:3s]" />
                     {/* Soft glow ring */}
-                    <div className="absolute size-14 rounded-full bg-violet-400/5 dark:bg-violet-400/10 animate-pulse [animation-duration:2.5s]" />
+                    <div className="absolute size-14 rounded-full bg-teal-400/10 animate-pulse [animation-duration:2.5s]" />
                     {/* Icon */}
-                    <Shuffle className="relative size-7 text-violet-400 dark:text-violet-500" />
+                    <Shuffle className="relative size-7 text-teal-400" />
                   </div>
-                  <p className="text-xs text-muted-foreground text-center" suppressHydrationWarning>
+                  <p className="text-xs text-gray-400 text-center" suppressHydrationWarning>
                     {t('settings.agentModeAutoDesc')}
                   </p>
                 </div>
               )}
 
               {/* Max turns — always visible */}
-              <div className="pt-2.5 mt-2.5 border-t flex items-center gap-3">
-                <span className="text-xs text-muted-foreground shrink-0" suppressHydrationWarning>
+              <div className="pt-2.5 mt-2.5 border-t border-white/10 flex items-center gap-3">
+                <span className="text-xs text-gray-400 shrink-0" suppressHydrationWarning>
                   {t('settings.maxTurns')}
                 </span>
                 <Input
@@ -313,7 +313,7 @@ export function AgentBar() {
                   max="20"
                   value={maxTurns}
                   onChange={(e) => setMaxTurns(e.target.value)}
-                  className="w-16 h-7 text-xs"
+                  className="w-16 h-7 text-xs bg-slate-700/50 border-white/10 text-white"
                 />
               </div>
             </div>

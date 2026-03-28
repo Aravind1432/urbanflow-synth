@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import {
@@ -18,6 +18,11 @@ import {
   Monitor,
   BotOff,
   ChevronUp,
+  Sparkles,
+  Paperclip,
+  Presentation,
+  Lightbulb,
+  GraduationCap,
 } from 'lucide-react';
 import { useI18n } from '@/lib/hooks/use-i18n';
 import { createLogger } from '@/lib/logger';
@@ -76,6 +81,8 @@ function HomePage() {
   const [settingsSection, setSettingsSection] = useState<
     import('@/lib/types/settings').SettingsSection | undefined
   >(undefined);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   // Draft cache for requirement text
   const { cachedValue: cachedRequirement, updateCache: updateRequirementCache } =
@@ -85,10 +92,20 @@ function HomePage() {
   const currentModelId = useSettingsStore((s) => s.modelId);
   const [storeHydrated, setStoreHydrated] = useState(false);
   const [recentOpen, setRecentOpen] = useState(true);
+  
+  // Generate particle positions once after mount to avoid hydration mismatch
+  const particlePositions = useMemo(() => {
+    if (!isMounted) return [];
+    return Array.from({ length: 6 }, () => ({
+      top: 25 + Math.random() * 50,
+      left: 25 + Math.random() * 50,
+    }));
+  }, [isMounted]);
 
   // Hydrate client-only state after mount (avoids SSR mismatch)
   /* eslint-disable react-hooks/set-state-in-effect -- Hydration from localStorage must happen in effect */
   useEffect(() => {
+    setIsMounted(true);
     setStoreHydrated(true);
     try {
       const saved = localStorage.getItem(RECENT_OPEN_STORAGE_KEY);
@@ -248,6 +265,7 @@ function HomePage() {
     }
 
     setError(null);
+    setIsGenerating(true);
 
     try {
       const userProfile = useUserProfileStore.getState();
@@ -294,10 +312,14 @@ function HomePage() {
       };
       sessionStorage.setItem('generationSession', JSON.stringify(sessionState));
 
-      router.push('/generation-preview');
+      // Small delay to show the animation before navigating
+      setTimeout(() => {
+        router.push('/generation-preview');
+      }, 800);
     } catch (err) {
       log.error('Error preparing generation:', err);
       setError(err instanceof Error ? err.message : t('upload.generateFailed'));
+      setIsGenerating(false);
     }
   };
 
@@ -323,11 +345,49 @@ function HomePage() {
   };
 
   return (
-    <div className="min-h-[100dvh] w-full bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 flex flex-col items-center p-4 pt-16 md:p-8 md:pt-16 overflow-x-hidden">
+    <div className="min-h-[100dvh] w-full bg-[#0A0A0A] flex flex-col items-center overflow-x-hidden futuristic-grid">
+      {/* ═══ Generation Loading Overlay ═══ */}
+      <AnimatePresence>
+        {isGenerating && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-[#0A0A0A]/95 backdrop-blur-sm flex items-center justify-center"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.3 }}
+              className="generating-card relative w-[220px] h-[280px] bg-black flex flex-col justify-end p-4 gap-3 rounded-xl cursor-pointer"
+            >
+              <p className="text-xl font-bold text-white">
+                {t('home.creatingOutline') || 'Creating Outline'}
+              </p>
+              <p className="text-sm text-gray-400">
+                {t('home.poweredBy') || 'Powered By'}
+              </p>
+              <p className="text-sm text-[#e81cff] font-semibold">
+                OpenMAIC AI
+              </p>
+              {/* Sparkle animation inside */}
+              <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+                >
+                  <Sparkles className="w-8 h-8 text-purple-400/60" />
+                </motion.div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* ═══ Top-right pill (unchanged) ═══ */}
       <div
         ref={toolbarRef}
-        className="fixed top-4 right-4 z-50 flex items-center gap-1 bg-white/60 dark:bg-gray-800/60 backdrop-blur-md px-2 py-1.5 rounded-full border border-gray-100/50 dark:border-gray-700/50 shadow-sm"
+        className="fixed top-4 right-4 z-50 flex items-center gap-1 bg-slate-900/60 backdrop-blur-md px-2 py-1.5 rounded-full border border-white/10 shadow-sm"
       >
         {/* Language Selector */}
         <div className="relative">
@@ -336,21 +396,21 @@ function HomePage() {
               setLanguageOpen(!languageOpen);
               setThemeOpen(false);
             }}
-            className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold text-gray-500 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-700 hover:text-gray-800 dark:hover:text-gray-200 hover:shadow-sm transition-all"
+            className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold text-gray-400 hover:bg-slate-800 hover:text-gray-200 hover:shadow-sm transition-all"
           >
             {locale === 'zh-CN' ? 'CN' : 'EN'}
           </button>
           {languageOpen && (
-            <div className="absolute top-full mt-2 right-0 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg overflow-hidden z-50 min-w-[120px]">
+            <div className="absolute top-full mt-2 right-0 bg-slate-800 border border-slate-700 rounded-lg shadow-lg overflow-hidden z-50 min-w-[120px]">
               <button
                 onClick={() => {
                   setLocale('zh-CN');
                   setLanguageOpen(false);
                 }}
                 className={cn(
-                  'w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors',
+                  'w-full px-4 py-2 text-left text-sm hover:bg-slate-700 transition-colors text-gray-300',
                   locale === 'zh-CN' &&
-                    'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400',
+                    'bg-teal-900/30 text-teal-400',
                 )}
               >
                 简体中文
@@ -361,9 +421,9 @@ function HomePage() {
                   setLanguageOpen(false);
                 }}
                 className={cn(
-                  'w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors',
+                  'w-full px-4 py-2 text-left text-sm hover:bg-slate-700 transition-colors text-gray-300',
                   locale === 'en-US' &&
-                    'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400',
+                    'bg-teal-900/30 text-teal-400',
                 )}
               >
                 English
@@ -372,7 +432,7 @@ function HomePage() {
           )}
         </div>
 
-        <div className="w-[1px] h-4 bg-gray-200 dark:bg-gray-700" />
+        <div className="w-[1px] h-4 bg-slate-700" />
 
         {/* Theme Selector */}
         <div className="relative">
@@ -381,23 +441,23 @@ function HomePage() {
               setThemeOpen(!themeOpen);
               setLanguageOpen(false);
             }}
-            className="p-2 rounded-full text-gray-400 dark:text-gray-500 hover:bg-white dark:hover:bg-gray-700 hover:text-gray-800 dark:hover:text-gray-200 hover:shadow-sm transition-all"
+            className="p-2 rounded-full text-gray-400 hover:bg-slate-800 hover:text-gray-200 hover:shadow-sm transition-all"
           >
             {theme === 'light' && <Sun className="w-4 h-4" />}
             {theme === 'dark' && <Moon className="w-4 h-4" />}
             {theme === 'system' && <Monitor className="w-4 h-4" />}
           </button>
           {themeOpen && (
-            <div className="absolute top-full mt-2 right-0 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg overflow-hidden z-50 min-w-[140px]">
+            <div className="absolute top-full mt-2 right-0 bg-slate-800 border border-slate-700 rounded-lg shadow-lg overflow-hidden z-50 min-w-[140px]">
               <button
                 onClick={() => {
                   setTheme('light');
                   setThemeOpen(false);
                 }}
                 className={cn(
-                  'w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center gap-2',
+                  'w-full px-4 py-2 text-left text-sm hover:bg-slate-700 transition-colors flex items-center gap-2 text-gray-300',
                   theme === 'light' &&
-                    'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400',
+                    'bg-teal-900/30 text-teal-400',
                 )}
               >
                 <Sun className="w-4 h-4" />
@@ -409,9 +469,9 @@ function HomePage() {
                   setThemeOpen(false);
                 }}
                 className={cn(
-                  'w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center gap-2',
+                  'w-full px-4 py-2 text-left text-sm hover:bg-slate-700 transition-colors flex items-center gap-2 text-gray-300',
                   theme === 'dark' &&
-                    'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400',
+                    'bg-teal-900/30 text-teal-400',
                 )}
               >
                 <Moon className="w-4 h-4" />
@@ -423,9 +483,9 @@ function HomePage() {
                   setThemeOpen(false);
                 }}
                 className={cn(
-                  'w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center gap-2',
+                  'w-full px-4 py-2 text-left text-sm hover:bg-slate-700 transition-colors flex items-center gap-2 text-gray-300',
                   theme === 'system' &&
-                    'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400',
+                    'bg-teal-900/30 text-teal-400',
                 )}
               >
                 <Monitor className="w-4 h-4" />
@@ -437,12 +497,12 @@ function HomePage() {
 
         {/* Settings Button - Hidden but kept for future use */}
         <div className="hidden">
-          <div className="w-[1px] h-4 bg-gray-200 dark:bg-gray-700" />
+          <div className="w-[1px] h-4 bg-slate-700" />
           <div className="relative">
             <button
               onClick={() => setSettingsOpen(true)}
               className={cn(
-                'p-2 rounded-full text-gray-400 dark:text-gray-500 hover:bg-white dark:hover:bg-gray-700 hover:text-gray-800 dark:hover:text-gray-200 hover:shadow-sm transition-all group',
+                'p-2 rounded-full text-gray-400 hover:bg-slate-800 hover:text-gray-200 hover:shadow-sm transition-all group',
                 needsSetup && 'animate-setup-glow',
               )}
             >
@@ -451,10 +511,10 @@ function HomePage() {
             {needsSetup && (
               <>
                 <span className="absolute -top-0.5 -right-0.5 flex h-3 w-3">
-                  <span className="animate-setup-ping absolute inline-flex h-full w-full rounded-full bg-violet-400 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-3 w-3 bg-violet-500" />
+                  <span className="animate-setup-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-teal-500" />
                 </span>
-                <span className="animate-setup-float absolute top-full mt-2 right-0 whitespace-nowrap text-[11px] font-medium text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-950/40 border border-violet-200 dark:border-violet-800/50 px-2 py-0.5 rounded-full shadow-sm pointer-events-none">
+                <span className="animate-setup-float absolute top-full mt-2 right-0 whitespace-nowrap text-[11px] font-medium text-teal-400 bg-teal-950/40 border border-teal-800/50 px-2 py-0.5 rounded-full shadow-sm pointer-events-none">
                   {t('settings.setupNeeded')}
                 </span>
               </>
@@ -471,84 +531,161 @@ function HomePage() {
         initialSection={settingsSection}
       />
 
-      {/* ═══ Background Decor ═══ */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div
-          className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse"
-          style={{ animationDuration: '4s' }}
-        />
-        <div
-          className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse"
-          style={{ animationDuration: '6s' }}
-        />
-      </div>
-
-      {/* ═══ Hero section: title + input (centered, wider) ═══ */}
+      {/* ═══ Main Content ═══ */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: 'easeOut' }}
         className={cn(
-          'relative z-20 w-full max-w-[800px] flex flex-col items-center',
-          classrooms.length === 0 ? 'justify-center min-h-[calc(100dvh-8rem)]' : 'mt-[10vh]',
+          'relative z-20 w-full max-w-[720px] flex flex-col items-center px-4',
+          classrooms.length === 0 ? 'justify-center min-h-[calc(100dvh-4rem)]' : 'pt-6',
         )}
       >
-        {/* ── Logo ── */}
-        <motion.img
-          src="/askjai_hero.png"
-          alt="AskJai"
-          initial={{ opacity: 0, scale: 0.9 }}
+        {/* ═══ Magical Orb with Rings — Compact 180px ═══ */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{
-            delay: 0.1,
-            type: 'spring',
-            stiffness: 200,
-            damping: 20,
-          }}
-          className="h-32 md:h-48 mb-2 -ml-2 md:-ml-3"
-        />
-
-        {/* ── Slogan ── */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.25 }}
-          className="text-sm text-muted-foreground/60 mb-8"
-          suppressHydrationWarning
+          transition={{ delay: 0.1, duration: 0.8, ease: 'easeOut' }}
+          className="magical-orb relative w-[180px] h-[180px] mb-4 flex items-center justify-center"
         >
-          {t('home.slogan')}
-        </motion.p>
+          {/* Ambient glow */}
+          <div className="absolute inset-0 rounded-full magical-orb-glow" />
+          
+          {/* Particle dust effect - fewer particles */}
+          <div className="absolute inset-0">
+            {particlePositions.map((pos, i) => (
+              <div
+                key={i}
+                className="absolute w-0.5 h-0.5 bg-purple-300/50 rounded-full particle-float"
+                style={{
+                  top: `${pos.top}%`,
+                  left: `${pos.left}%`,
+                  animationDelay: `${i * 0.4}s`,
+                }}
+              />
+            ))}
+          </div>
 
-        {/* ── Unified input area ── */}
+          {/* Outer ring - expanding (only 2) */}
+          <div className="absolute inset-0 rounded-full border border-purple-400/15 magical-ring-expand" style={{ animationDelay: '0s' }} />
+          <div className="absolute inset-0 rounded-full border border-purple-400/15 magical-ring-expand" style={{ animationDelay: '1.5s' }} />
+          
+          {/* Static ring 1 - thinner */}
+          <div className="absolute inset-4 rounded-full border border-purple-400/20 magical-ring" style={{ animationDelay: '0.5s' }} />
+          
+          {/* Static ring 2 - thinner */}
+          <div className="absolute inset-8 rounded-full border border-violet-400/25 magical-ring" style={{ animationDelay: '1s' }} />
+
+          {/* Main orb sphere - 80px */}
+          <div className="relative w-20 h-20 rounded-full overflow-hidden shadow-xl">
+            {/* Gradient background */}
+            <div className="absolute inset-0 bg-gradient-to-br from-violet-400 via-purple-500 via-50% to-pink-400" />
+            
+            {/* Subtle inner glow */}
+            <div className="absolute inset-0 bg-gradient-to-t from-transparent via-white/10 to-white/20" />
+            
+            {/* Shine highlight */}
+            <div className="absolute top-1.5 left-2 w-4 h-4 bg-white/30 rounded-full blur-sm" />
+            
+            {/* Sparkle icons - 20px max */}
+            <div className="absolute inset-0 flex items-center justify-center gap-0.5">
+              <svg className="w-5 h-5 text-white sparkle-twinkle" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
+              </svg>
+              <svg className="w-3 h-3 text-white/80 sparkle-twinkle-delayed -mt-3" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
+              </svg>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* ═══ Greeting Section — Compact ═══ */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.5 }}
+          className="text-center mb-5"
+        >
+          <h1 className="text-[32px] font-light text-white mb-1">
+            <span className="font-normal">{t('home.greeting')}</span>
+            <span className="font-semibold text-white">{useUserProfileStore.getState().nickname || t('profile.defaultNickname')}</span>
+          </h1>
+          <p className="text-[18px] font-normal text-[#888888]">
+            {t('home.whatCanIHelp') || 'What can I help with?'}
+          </p>
+        </motion.div>
+
+        {/* ═══ Suggestion Cards — Compact ═══ */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+          className="w-full grid grid-cols-1 md:grid-cols-3 gap-3 mb-4"
+        >
+          <SuggestionCard
+            icon={<Presentation className="w-3.5 h-3.5" />}
+            title={t('home.suggestionPresentation') || 'Content Help'}
+            description={t('home.suggestionPresentationDesc') || 'Help with me create a Presentation'}
+            onClick={() => {
+              updateForm('requirement', t('home.suggestionPresentationPrompt') || 'Help me create an engaging presentation');
+              textareaRef.current?.focus();
+            }}
+          />
+          <SuggestionCard
+            icon={<Lightbulb className="w-3.5 h-3.5" />}
+            title={t('home.suggestionIdeas') || 'Suggestions'}
+            description={t('home.suggestionIdeasDesc') || 'Help with me ideas'}
+            onClick={() => {
+              updateForm('requirement', t('home.suggestionIdeasPrompt') || 'Give me creative ideas for');
+              textareaRef.current?.focus();
+            }}
+          />
+          <SuggestionCard
+            icon={<GraduationCap className="w-3.5 h-3.5" />}
+            title={t('home.suggestionStudy') || 'Job Application'}
+            description={t('home.suggestionStudyDesc') || 'Help with me apply for job application'}
+            onClick={() => {
+              updateForm('requirement', t('home.suggestionStudyPrompt') || 'Help me study and understand');
+              textareaRef.current?.focus();
+            }}
+          />
+        </motion.div>
+
+        {/* ═══ Chat Input Area — Compact ═══ */}
         <motion.div
           initial={{ opacity: 0, scale: 0.97 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.35 }}
+          transition={{ delay: 0.4, duration: 0.5 }}
           className="w-full"
         >
-          <div className="w-full rounded-2xl border border-border/60 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-xl shadow-black/[0.03] dark:shadow-black/20 transition-shadow focus-within:shadow-2xl focus-within:shadow-violet-500/[0.06]">
-            {/* ── Greeting + Profile + Agents ── */}
-            <div className="relative z-20 flex items-start justify-between">
-              <GreetingBar />
-              <div className="pr-3 pt-3.5 shrink-0">
-                <AgentBar />
+          {/* Agent Bar - Above the input, expands upward */}
+          <div className="mb-2">
+            <AgentBar />
+          </div>
+
+          <div className="chat-input-container overflow-hidden">
+            {/* Sparkle Icon + Textarea */}
+            <div className="px-4 py-3.5">
+              <div className="flex items-start gap-3">
+                <div className="shrink-0 mt-0.5">
+                  <Sparkles className="w-4 h-4 text-violet-400" />
+                </div>
+                <textarea
+                  ref={textareaRef}
+                  placeholder={t('home.askAnything') || 'Ask me anything......'}
+                  className="w-full resize-none border-0 bg-transparent text-white placeholder:text-gray-500 focus:outline-none min-h-[60px] max-h-[150px] text-[14px] leading-relaxed"
+                  value={form.requirement}
+                  onChange={(e) => updateForm('requirement', e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  rows={2}
+                />
               </div>
             </div>
 
-            {/* Textarea */}
-            <textarea
-              ref={textareaRef}
-              placeholder={t('upload.requirementPlaceholder')}
-              className="w-full resize-none border-0 bg-transparent px-4 pt-1 pb-2 text-[13px] leading-relaxed placeholder:text-muted-foreground/40 focus:outline-none min-h-[140px] max-h-[300px]"
-              value={form.requirement}
-              onChange={(e) => updateForm('requirement', e.target.value)}
-              onKeyDown={handleKeyDown}
-              rows={4}
-            />
-
-            {/* Toolbar row */}
-            <div className="px-3 pb-3 flex items-end gap-2">
-              <div className="flex-1 min-w-0">
+            {/* Bottom toolbar row */}
+            <div className="px-4 pb-3.5 flex items-center justify-between gap-2">
+              {/* Left side - Attach file and toolbar */}
+              <div className="flex items-center gap-2 flex-1 min-w-0">
                 <GenerationToolbar
                   language={form.language}
                   onLanguageChange={(lang) => updateForm('language', lang)}
@@ -564,32 +701,33 @@ function HomePage() {
                 />
               </div>
 
-              {/* Voice input */}
-              <SpeechButton
-                size="md"
-                onTranscription={(text) => {
-                  setForm((prev) => {
-                    const next = prev.requirement + (prev.requirement ? ' ' : '') + text;
-                    updateRequirementCache(next);
-                    return { ...prev, requirement: next };
-                  });
-                }}
-              />
+              {/* Right side - Voice input + Send button */}
+              <div className="flex items-center gap-2 shrink-0">
+                <SpeechButton
+                  size="md"
+                  onTranscription={(text) => {
+                    setForm((prev) => {
+                      const next = prev.requirement + (prev.requirement ? ' ' : '') + text;
+                      updateRequirementCache(next);
+                      return { ...prev, requirement: next };
+                    });
+                  }}
+                />
 
-              {/* Send button */}
-              <button
-                onClick={handleGenerate}
-                disabled={!canGenerate}
-                className={cn(
-                  'shrink-0 h-8 rounded-lg flex items-center justify-center gap-1.5 transition-all px-3',
-                  canGenerate
-                    ? 'bg-primary text-primary-foreground hover:opacity-90 shadow-sm cursor-pointer'
-                    : 'bg-muted text-muted-foreground/40 cursor-not-allowed',
-                )}
-              >
-                <span className="text-xs font-medium">{t('toolbar.enterClassroom')}</span>
-                <ArrowUp className="size-3.5" />
-              </button>
+                {/* Send button */}
+                <button
+                  onClick={handleGenerate}
+                  disabled={!canGenerate}
+                  className={cn(
+                    'shrink-0 w-9 h-9 rounded-full flex items-center justify-center transition-all',
+                    canGenerate
+                      ? 'send-button-cyan cursor-pointer'
+                      : 'bg-slate-700/60 text-slate-500 cursor-not-allowed',
+                  )}
+                >
+                  <ArrowUp className="w-4 h-4 text-white" />
+                </button>
+              </div>
             </div>
           </div>
         </motion.div>
@@ -601,9 +739,9 @@ function HomePage() {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="mt-3 w-full p-3 bg-destructive/10 border border-destructive/20 rounded-lg"
+              className="mt-3 w-full p-3 bg-red-500/10 border border-red-500/20 rounded-lg"
             >
-              <p className="text-sm text-destructive">{error}</p>
+              <p className="text-sm text-red-400">{error}</p>
             </motion.div>
           )}
         </AnimatePresence>
@@ -615,7 +753,7 @@ function HomePage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
-          className="relative z-10 mt-10 w-full max-w-6xl flex flex-col items-center"
+          className="relative z-10 mt-10 w-full max-w-6xl flex flex-col items-center px-4"
         >
           {/* Trigger — divider-line with centered text */}
           <button
@@ -630,8 +768,8 @@ function HomePage() {
             }}
             className="group w-full flex items-center gap-4 py-2 cursor-pointer"
           >
-            <div className="flex-1 h-px bg-border/40 group-hover:bg-border/70 transition-colors" />
-            <span className="shrink-0 flex items-center gap-2 text-[13px] text-muted-foreground/60 group-hover:text-foreground/70 transition-colors select-none">
+            <div className="flex-1 h-px bg-white/10 group-hover:bg-white/20 transition-colors" />
+            <span className="shrink-0 flex items-center gap-2 text-[13px] text-gray-500 group-hover:text-gray-300 transition-colors select-none">
               <Clock className="size-3.5" />
               {t('classroom.recentClassrooms')}
               <span className="text-[11px] tabular-nums opacity-60">{classrooms.length}</span>
@@ -642,7 +780,7 @@ function HomePage() {
                 <ChevronDown className="size-3.5" />
               </motion.div>
             </span>
-            <div className="flex-1 h-px bg-border/40 group-hover:bg-border/70 transition-colors" />
+            <div className="flex-1 h-px bg-white/10 group-hover:bg-white/20 transition-colors" />
           </button>
 
           {/* Expandable content */}
@@ -687,7 +825,7 @@ function HomePage() {
       )}
 
       {/* Footer — Hidden but kept for future use */}
-      <div className="mt-auto pt-12 pb-4 text-center text-xs text-muted-foreground/40 hidden">
+      <div className="mt-auto pt-12 pb-4 text-center text-xs text-gray-600 hidden">
         AskJai Open Source Project
       </div>
     </div>
@@ -984,7 +1122,35 @@ function GreetingBar() {
   );
 }
 
-// ─── Classroom Card — clean, minimal style ──────────────────────
+// ─── Suggestion Card — Compact style ──────────────────────
+function SuggestionCard({
+  icon,
+  title,
+  description,
+  onClick,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className="suggestion-card w-full text-left transition-all group"
+    >
+      <div className="suggestion-card-badge inline-flex items-center gap-1 mb-2">
+        <span className="text-violet-400">{icon}</span>
+        <span className="text-[11px] font-medium text-violet-300">{title}</span>
+      </div>
+      <p className="text-[13px] text-[#666666] group-hover:text-gray-400 transition-colors leading-snug">
+        {description}
+      </p>
+    </button>
+  );
+}
+
+// ─── Classroom Card — dark theme style ──────────────────────
 function ClassroomCard({
   classroom,
   slide,
@@ -1020,10 +1186,10 @@ function ClassroomCard({
 
   return (
     <div className="group cursor-pointer" onClick={confirmingDelete ? undefined : onClick}>
-      {/* Thumbnail — large radius, no border, subtle bg */}
+      {/* Thumbnail — large radius, dark bg */}
       <div
         ref={thumbRef}
-        className="relative w-full aspect-[16/9] rounded-2xl bg-slate-100 dark:bg-slate-800/80 overflow-hidden transition-transform duration-200 group-hover:scale-[1.02]"
+        className="relative w-full aspect-[16/9] rounded-2xl bg-slate-800/80 overflow-hidden transition-transform duration-200 group-hover:scale-[1.02] border border-white/5"
       >
         {slide && thumbWidth > 0 ? (
           <ThumbnailSlide
@@ -1034,7 +1200,7 @@ function ClassroomCard({
           />
         ) : !slide ? (
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="size-12 rounded-2xl bg-gradient-to-br from-violet-100 to-blue-100 dark:from-violet-900/30 dark:to-blue-900/30 flex items-center justify-center">
+            <div className="size-12 rounded-2xl bg-gradient-to-br from-teal-900/30 to-slate-800/50 flex items-center justify-center">
               <span className="text-xl opacity-50">📄</span>
             </div>
           </div>
@@ -1052,7 +1218,7 @@ function ClassroomCard({
               <Button
                 size="icon"
                 variant="ghost"
-                className="absolute top-2 right-2 size-7 opacity-0 group-hover:opacity-100 transition-opacity bg-black/30 hover:bg-destructive/80 text-white hover:text-white backdrop-blur-sm rounded-full"
+                className="absolute top-2 right-2 size-7 opacity-0 group-hover:opacity-100 transition-opacity bg-black/30 hover:bg-red-500/80 text-white hover:text-white backdrop-blur-sm rounded-full"
                 onClick={(e) => {
                   e.stopPropagation();
                   onDelete(classroom.id, e);
@@ -1099,12 +1265,12 @@ function ClassroomCard({
 
       {/* Info — outside the thumbnail */}
       <div className="mt-2.5 px-1 flex items-center gap-2">
-        <span className="shrink-0 inline-flex items-center rounded-full bg-violet-100 dark:bg-violet-900/30 px-2 py-0.5 text-[11px] font-medium text-violet-600 dark:text-violet-400">
+        <span className="shrink-0 inline-flex items-center rounded-full bg-teal-900/30 px-2 py-0.5 text-[11px] font-medium text-teal-400">
           {classroom.sceneCount} {t('classroom.slides')} · {formatDate(classroom.updatedAt)}
         </span>
         <Tooltip>
           <TooltipTrigger asChild>
-            <p className="font-medium text-[15px] truncate text-foreground/90 min-w-0">
+            <p className="font-medium text-[15px] truncate text-gray-200 min-w-0">
               {classroom.name}
             </p>
           </TooltipTrigger>
@@ -1116,7 +1282,7 @@ function ClassroomCard({
             <div className="flex items-center gap-1.5">
               <span className="break-all">{classroom.name}</span>
               <button
-                className="shrink-0 p-0.5 rounded hover:bg-foreground/10 transition-colors"
+                className="shrink-0 p-0.5 rounded hover:bg-white/10 transition-colors"
                 onClick={(e) => {
                   e.stopPropagation();
                   navigator.clipboard.writeText(classroom.name);
