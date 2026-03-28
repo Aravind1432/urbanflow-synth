@@ -345,7 +345,15 @@ function HomePage() {
   };
 
   return (
-    <div className="min-h-[100dvh] w-full bg-[#0A0A0A] flex flex-col items-center overflow-x-hidden futuristic-grid">
+    <div className="min-h-[100dvh] w-full premium-bg premium-grid flex flex-col items-center overflow-x-hidden relative">
+      {/* Floating geometric shapes */}
+      <div className="floating-shapes">
+        <div className="floating-shape geo-float-1 w-16 h-16 rotate-12" style={{ top: '10%', left: '8%', borderColor: 'rgba(124,58,237,0.06)' }} />
+        <div className="floating-shape geo-float-2 w-10 h-10 rotate-45 rounded-full" style={{ top: '25%', right: '12%', borderColor: 'rgba(168,85,247,0.08)' }} />
+        <div className="floating-shape geo-float-3 w-20 h-20" style={{ bottom: '20%', left: '15%', borderColor: 'rgba(99,102,241,0.06)' }} />
+        <div className="floating-shape geo-float-1 w-8 h-8 rounded-full" style={{ top: '60%', right: '8%', borderColor: 'rgba(124,58,237,0.07)', animationDelay: '5s' }} />
+        <div className="floating-shape geo-float-2 w-14 h-14 rotate-[30deg]" style={{ bottom: '10%', right: '25%', borderColor: 'rgba(168,85,247,0.05)', animationDelay: '3s' }} />
+      </div>
       {/* ═══ Generation Loading Overlay ═══ */}
       <AnimatePresence>
         {isGenerating && (
@@ -541,76 +549,69 @@ function HomePage() {
           classrooms.length === 0 ? 'justify-center min-h-[calc(100dvh-4rem)]' : 'pt-6',
         )}
       >
-        {/* ═══ Magical Orb with Rings — Compact 180px ═══ */}
+        {/* ═══ Premium Orb with Animated Rings ═══ */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.1, duration: 0.8, ease: 'easeOut' }}
-          className="magical-orb relative w-[180px] h-[180px] mb-4 flex items-center justify-center"
+          className="premium-orb relative w-[200px] h-[200px] mb-6 flex items-center justify-center"
         >
-          {/* Ambient glow */}
-          <div className="absolute inset-0 rounded-full magical-orb-glow" />
+          {/* Deep ambient glow */}
+          <div className="absolute inset-[-20px] rounded-full premium-orb-glow" />
           
-          {/* Particle dust effect - fewer particles */}
+          {/* Particle dust effect */}
           <div className="absolute inset-0">
             {particlePositions.map((pos, i) => (
               <div
                 key={i}
-                className="absolute w-0.5 h-0.5 bg-purple-300/50 rounded-full particle-float"
+                className="absolute w-1 h-1 rounded-full particle-float"
                 style={{
                   top: `${pos.top}%`,
                   left: `${pos.left}%`,
-                  animationDelay: `${i * 0.4}s`,
+                  animationDelay: `${i * 0.5}s`,
+                  background: `rgba(${139 + i * 10}, ${92 + i * 5}, 246, 0.6)`,
                 }}
               />
             ))}
           </div>
 
-          {/* Outer ring - expanding (only 2) */}
-          <div className="absolute inset-0 rounded-full border border-purple-400/15 magical-ring-expand" style={{ animationDelay: '0s' }} />
-          <div className="absolute inset-0 rounded-full border border-purple-400/15 magical-ring-expand" style={{ animationDelay: '1.5s' }} />
+          {/* Expanding rings */}
+          <div className="absolute inset-[-10px] rounded-full border border-purple-500/10 magical-ring-expand" style={{ animationDelay: '0s' }} />
+          <div className="absolute inset-[-10px] rounded-full border border-purple-500/10 magical-ring-expand" style={{ animationDelay: '1.5s' }} />
           
-          {/* Static ring 1 - thinner */}
-          <div className="absolute inset-4 rounded-full border border-purple-400/20 magical-ring" style={{ animationDelay: '0.5s' }} />
-          
-          {/* Static ring 2 - thinner */}
-          <div className="absolute inset-8 rounded-full border border-violet-400/25 magical-ring" style={{ animationDelay: '1s' }} />
+          {/* Static orbital rings */}
+          <div className="absolute inset-3 rounded-full border border-purple-400/15 magical-ring" style={{ animationDelay: '0.5s' }} />
+          <div className="absolute inset-7 rounded-full border border-violet-400/20 magical-ring" style={{ animationDelay: '1s' }} />
+          <div className="absolute inset-11 rounded-full border border-indigo-400/15 magical-ring" style={{ animationDelay: '1.5s' }} />
 
-          {/* Main orb sphere - 80px */}
-          <div className="relative w-20 h-20 rounded-full overflow-hidden shadow-xl">
-            {/* Gradient background */}
-            <div className="absolute inset-0 bg-gradient-to-br from-violet-400 via-purple-500 via-50% to-pink-400" />
-            
-            {/* Subtle inner glow */}
-            <div className="absolute inset-0 bg-gradient-to-t from-transparent via-white/10 to-white/20" />
-            
-            {/* Shine highlight */}
-            <div className="absolute top-1.5 left-2 w-4 h-4 bg-white/30 rounded-full blur-sm" />
-            
-            {/* Sparkle icons - 20px max */}
-            <div className="absolute inset-0 flex items-center justify-center gap-0.5">
-              <svg className="w-5 h-5 text-white sparkle-twinkle" viewBox="0 0 24 24" fill="currentColor">
+          {/* Main orb sphere */}
+          <div className="relative w-[88px] h-[88px] rounded-full overflow-hidden shadow-2xl">
+            <div className="absolute inset-0 bg-gradient-to-br from-violet-400 via-purple-600 via-60% to-indigo-500" />
+            <div className="absolute inset-0 bg-gradient-to-t from-transparent via-white/8 to-white/20" />
+            <div className="absolute top-2 left-3 w-5 h-5 bg-white/25 rounded-full blur-sm" />
+            <div className="absolute inset-0 flex items-center justify-center gap-1">
+              <svg className="w-6 h-6 text-white sparkle-twinkle drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
               </svg>
-              <svg className="w-3 h-3 text-white/80 sparkle-twinkle-delayed -mt-3" viewBox="0 0 24 24" fill="currentColor">
+              <svg className="w-3.5 h-3.5 text-white/80 sparkle-twinkle-delayed -mt-4" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
               </svg>
             </div>
           </div>
         </motion.div>
 
-        {/* ═══ Greeting Section — Compact ═══ */}
+        {/* ═══ Greeting Section ═══ */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.5 }}
-          className="text-center mb-5"
+          className="text-center mb-6"
         >
-          <h1 className="text-[32px] font-light text-white mb-1">
-            <span className="font-normal">{t('home.greeting')}</span>
-            <span className="font-semibold text-white">{useUserProfileStore.getState().nickname || t('profile.defaultNickname')}</span>
+          <h1 className="text-[36px] md:text-[42px] font-extralight text-white mb-2 tracking-tight">
+            <span className="font-light">{t('home.greeting')}</span>
+            <span className="font-bold bg-gradient-to-r from-purple-300 via-violet-400 to-indigo-400 bg-clip-text text-transparent">{useUserProfileStore.getState().nickname || t('profile.defaultNickname')}</span>
           </h1>
-          <p className="text-[18px] font-normal text-[#888888]">
+          <p className="text-[16px] md:text-[18px] font-normal text-[#6B6B8D]">
             {t('home.whatCanIHelp') || 'What can I help with?'}
           </p>
         </motion.div>
@@ -663,7 +664,7 @@ function HomePage() {
             <AgentBar />
           </div>
 
-          <div className="chat-input-container overflow-hidden">
+          <div className="premium-input-container overflow-hidden">
             {/* Sparkle Icon + Textarea */}
             <div className="px-4 py-3.5">
               <div className="flex items-start gap-3">
@@ -719,10 +720,10 @@ function HomePage() {
                   onClick={handleGenerate}
                   disabled={!canGenerate}
                   className={cn(
-                    'shrink-0 w-9 h-9 rounded-full flex items-center justify-center transition-all',
+                    'shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-all',
                     canGenerate
-                      ? 'send-button-cyan cursor-pointer'
-                      : 'bg-slate-700/60 text-slate-500 cursor-not-allowed',
+                      ? 'premium-send-btn cursor-pointer'
+                      : 'bg-slate-700/40 text-slate-500 cursor-not-allowed',
                   )}
                 >
                   <ArrowUp className="w-4 h-4 text-white" />
@@ -1137,13 +1138,13 @@ function SuggestionCard({
   return (
     <button
       onClick={onClick}
-      className="suggestion-card w-full text-left transition-all group"
+      className="suggestion-card-premium w-full text-left group"
     >
-      <div className="suggestion-card-badge inline-flex items-center gap-1 mb-2">
+      <div className="inline-flex items-center gap-1.5 mb-3 px-3 py-1.5 rounded-full" style={{ background: 'rgba(124,58,237,0.1)', border: '1px solid rgba(124,58,237,0.2)' }}>
         <span className="text-violet-400">{icon}</span>
-        <span className="text-[11px] font-medium text-violet-300">{title}</span>
+        <span className="text-[11px] font-semibold text-violet-300 tracking-wide">{title}</span>
       </div>
-      <p className="text-[13px] text-[#666666] group-hover:text-gray-400 transition-colors leading-snug">
+      <p className="text-[13px] text-[#555570] group-hover:text-[#8888AA] transition-colors leading-relaxed">
         {description}
       </p>
     </button>
