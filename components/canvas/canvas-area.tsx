@@ -185,7 +185,14 @@ export function CanvasArea({
 
           {/* Scene Number Badge */}
           {currentScene && (
-            <div className="absolute top-4 right-4 text-gray-200 dark:text-gray-700 font-black text-4xl opacity-50 pointer-events-none select-none mix-blend-multiply dark:mix-blend-screen">
+            <div
+              className="absolute top-4 right-5 font-bold text-[11px] pointer-events-none select-none rounded-full px-2.5 py-1"
+              style={{
+                background: 'rgba(124,58,237,0.1)',
+                border: '1px solid rgba(124,58,237,0.2)',
+                color: '#7C3AED',
+              }}
+            >
               {(currentSceneIndex + 1).toString().padStart(2, '0')}
             </div>
           )}
