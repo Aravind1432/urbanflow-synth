@@ -36,7 +36,7 @@ export interface CanvasToolbarProps {
   readonly showStopDiscussion?: boolean;
   readonly onStopDiscussion?: () => void;
   readonly className?: string;
-  // Audio/playback controls
+  readonly style?: React.CSSProperties;
   readonly ttsEnabled?: boolean;
   readonly ttsMuted?: boolean;
   readonly ttsVolume?: number;
