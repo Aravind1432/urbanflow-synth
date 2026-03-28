@@ -105,10 +105,10 @@ export function SceneSidebar({
       style={{
         width: displayWidth,
         transition: isDraggingRef.current ? 'none' : 'width 0.3s ease',
+        background: 'var(--cr-panel, #0A0A14)',
+        borderRight: '1px solid rgba(124,58,237,0.1)',
       }}
       className="flex flex-col shrink-0 z-20 relative overflow-visible"
-      style={{ background: 'var(--cr-panel, #0A0A14)', borderRight: '1px solid rgba(124,58,237,0.1)', width: displayWidth, transition: isDraggingRef.current ? 'none' : 'width 0.3s ease' }}
-    >
     >
       {/* Drag handle */}
       {!collapsed && (
