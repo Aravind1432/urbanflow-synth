@@ -93,6 +93,7 @@ export function CanvasToolbar({
   showStopDiscussion,
   onStopDiscussion,
   className,
+  style,
   ttsEnabled,
   ttsMuted,
   ttsVolume = 1,
