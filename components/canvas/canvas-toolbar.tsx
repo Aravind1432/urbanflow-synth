@@ -36,7 +36,7 @@ export interface CanvasToolbarProps {
   readonly showStopDiscussion?: boolean;
   readonly onStopDiscussion?: () => void;
   readonly className?: string;
-  // Audio/playback controls
+  readonly style?: React.CSSProperties;
   readonly ttsEnabled?: boolean;
   readonly ttsMuted?: boolean;
   readonly ttsVolume?: number;
@@ -93,6 +93,7 @@ export function CanvasToolbar({
   showStopDiscussion,
   onStopDiscussion,
   className,
+  style,
   ttsEnabled,
   ttsMuted,
   ttsVolume = 1,
@@ -133,7 +134,7 @@ export function CanvasToolbar({
   const effectiveVolume = ttsMuted ? 0 : ttsVolume;
 
   return (
-    <div className={cn('flex items-center', className)}>
+    <div className={cn('flex items-center', className)} style={style}>
       {/* ── Left: sidebar toggle + page indicator ── */}
       <div className="flex items-center gap-1 shrink-0 pl-1">
         {onToggleSidebar && (

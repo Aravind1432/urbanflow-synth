@@ -428,7 +428,7 @@ export function Roundtable({
   }, [playbackSpeed, setPlaybackSpeed]);
 
   return (
-    <div className="h-[192px] w-full flex flex-col relative z-10 border-t border-gray-100 dark:border-gray-800 bg-white/60 dark:bg-gray-800/60 backdrop-blur-md">
+    <div className="h-[192px] w-full flex flex-col relative z-10" style={{ background: 'rgba(10,10,20,0.95)', backdropFilter: 'blur(20px)', borderTop: '1px solid rgba(124,58,237,0.1)' }}>
       {/* ── Toolbar strip — merged from CanvasArea ── */}
       <CanvasToolbar
         className="shrink-0 h-8 px-3 border-b border-gray-100/40 dark:border-gray-700/30"

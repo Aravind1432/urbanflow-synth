@@ -78,24 +78,32 @@ export function CanvasArea({
   );
 
   return (
-    <div className="w-full h-full flex flex-col bg-gray-50 dark:bg-gray-900 group/canvas">
+    <div className="w-full h-full flex flex-col group/canvas" style={{ background: 'var(--cr-base, #07070F)' }}>
       {/* Slide area — takes remaining space */}
       <div
-        className={cn(
-          'flex-1 min-h-0 relative overflow-hidden flex items-center justify-center p-2 transition-colors duration-500',
-          currentScene?.type === 'interactive'
-            ? 'bg-blue-50/30 dark:bg-blue-900/10'
-            : 'bg-gray-50/30 dark:bg-gray-900/30',
-        )}
+        className="flex-1 min-h-0 relative overflow-hidden flex items-center justify-center p-6 transition-colors duration-500"
       >
+        {/* Purple ambient glow behind slide */}
+        <div
+          className="absolute pointer-events-none"
+          style={{
+            inset: '-40px',
+            zIndex: 0,
+            background: 'radial-gradient(ellipse at 50% 50%, rgba(124,58,237,0.12) 0%, transparent 65%)',
+            filter: 'blur(40px)',
+          }}
+        />
         <div
           className={cn(
-            'aspect-[16/9] h-full max-h-full max-w-full bg-white dark:bg-gray-800 shadow-2xl rounded-lg overflow-hidden relative transition-all duration-700',
+            'aspect-[16/9] h-full max-h-full max-w-full bg-white rounded-[20px] overflow-hidden relative transition-all duration-700',
             showControls && !isLiveSession && currentScene?.type === 'slide' && 'cursor-pointer',
-            currentScene?.type === 'interactive'
-              ? 'shadow-blue-200/50 dark:shadow-blue-900/50 ring-1 ring-blue-900/5 dark:ring-blue-500/10'
-              : 'shadow-gray-200/50 dark:shadow-gray-800/50 ring-1 ring-gray-950/5 dark:ring-white/5',
           )}
+          style={{
+            zIndex: 1,
+            maxWidth: '820px',
+            maxHeight: '520px',
+            boxShadow: '0 0 0 1px rgba(124,58,237,0.2), 0 20px 80px rgba(0,0,0,0.6), 0 0 120px rgba(124,58,237,0.08)',
+          }}
           onClick={handleSlideClick}
         >
           {/* Whiteboard Layer */}
@@ -177,7 +185,14 @@ export function CanvasArea({
 
           {/* Scene Number Badge */}
           {currentScene && (
-            <div className="absolute top-4 right-4 text-gray-200 dark:text-gray-700 font-black text-4xl opacity-50 pointer-events-none select-none mix-blend-multiply dark:mix-blend-screen">
+            <div
+              className="absolute top-4 right-5 font-bold text-[11px] pointer-events-none select-none rounded-full px-2.5 py-1"
+              style={{
+                background: 'rgba(124,58,237,0.1)',
+                border: '1px solid rgba(124,58,237,0.2)',
+                color: '#7C3AED',
+              }}
+            >
               {(currentSceneIndex + 1).toString().padStart(2, '0')}
             </div>
           )}
@@ -228,11 +243,12 @@ export function CanvasArea({
       {/* ── Canvas Toolbar — in document flow, only when not merged into roundtable ── */}
       {!hideToolbar && (
         <CanvasToolbar
-          className={cn(
-            'shrink-0 h-9 px-2',
-            'bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl',
-            'border-t border-gray-200/40 dark:border-gray-700/40',
-          )}
+          className="shrink-0 h-[52px] px-2"
+          style={{
+            background: 'rgba(10,10,20,0.95)',
+            backdropFilter: 'blur(20px)',
+            borderTop: '1px solid rgba(124,58,237,0.1)',
+          }}
           currentSceneIndex={currentSceneIndex}
           scenesCount={scenesCount}
           engineState={engineState}
