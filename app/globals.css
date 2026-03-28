@@ -116,6 +116,45 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+/* ═══ Classroom Dark Purple Theme ═══ */
+.classroom-theme {
+  --cr-base: #07070F;
+  --cr-panel: #0D0D1A;
+  --cr-card: #111122;
+  --cr-border: rgba(124,58,237,0.15);
+  --cr-border-subtle: rgba(124,58,237,0.1);
+  --cr-primary: #7C3AED;
+  --cr-primary-light: #A855F7;
+  --cr-primary-glow: rgba(124,58,237,0.3);
+  --cr-text: #F0F0FF;
+  --cr-text-muted: #555577;
+  --cr-text-dim: #333355;
+  --cr-text-label: #888899;
+}
+
+@keyframes cr-speaking {
+  0%,100% { box-shadow: 0 0 0 2px rgba(124,58,237,0.5); }
+  50% { box-shadow: 0 0 0 6px rgba(124,58,237,0.1); }
+}
+@keyframes cr-bounce {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+@keyframes cr-float {
+  0%,100% { transform: translateY(0px); }
+  50% { transform: translateY(-3px); }
+}
+
+.cr-speaking { animation: cr-speaking 1.5s infinite; }
+.cr-bounce-1 { animation: cr-bounce 0.8s infinite; }
+.cr-bounce-2 { animation: cr-bounce 0.8s infinite 0.15s; }
+.cr-bounce-3 { animation: cr-bounce 0.8s infinite 0.3s; }
+
+/* Classroom custom scrollbar */
+.cr-scrollbar::-webkit-scrollbar { width: 3px; }
+.cr-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.cr-scrollbar::-webkit-scrollbar-thumb { background: rgba(124,58,237,0.3); border-radius: 999px; }
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

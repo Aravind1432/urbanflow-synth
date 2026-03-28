@@ -243,11 +243,12 @@ export function CanvasArea({
       {/* ── Canvas Toolbar — in document flow, only when not merged into roundtable ── */}
       {!hideToolbar && (
         <CanvasToolbar
-          className={cn(
-            'shrink-0 h-9 px-2',
-            'bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl',
-            'border-t border-gray-200/40 dark:border-gray-700/40',
-          )}
+          className="shrink-0 h-[52px] px-2"
+          style={{
+            background: 'rgba(10,10,20,0.95)',
+            backdropFilter: 'blur(20px)',
+            borderTop: '1px solid rgba(124,58,237,0.1)',
+          }}
           currentSceneIndex={currentSceneIndex}
           scenesCount={scenesCount}
           engineState={engineState}

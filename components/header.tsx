@@ -274,11 +274,16 @@ export function Header({ currentSceneTitle }: HeaderProps) {
                 : t('share.notReady')
             }
             className={cn(
-              'shrink-0 p-2 rounded-full transition-all',
+              'shrink-0 p-2 rounded-lg transition-all',
               canExport && !isExporting
-                ? 'text-gray-400 dark:text-gray-500 hover:bg-white dark:hover:bg-gray-700 hover:text-gray-800 dark:hover:text-gray-200 hover:shadow-sm'
-                : 'text-gray-300 dark:text-gray-600 cursor-not-allowed opacity-50',
+                ? 'hover:opacity-100'
+                : 'cursor-not-allowed opacity-30',
             )}
+            style={{
+              background: '#111122',
+              border: '1px solid rgba(255,255,255,0.08)',
+              color: '#888899',
+            }}
           >
             {isExporting ? (
               <Loader2 className="w-4 h-4 animate-spin" />

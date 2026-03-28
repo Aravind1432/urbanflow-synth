@@ -677,7 +677,7 @@ export function Stage({
   })();
 
   return (
-    <div className="flex-1 flex overflow-hidden bg-gray-50 dark:bg-gray-900">
+    <div className="classroom-theme flex-1 flex overflow-hidden" style={{ background: 'var(--cr-base)' }}>
       {/* Scene Sidebar */}
       <SceneSidebar
         collapsed={sidebarCollapsed}
