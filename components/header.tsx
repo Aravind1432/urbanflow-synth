@@ -120,7 +120,14 @@ export function Header({ currentSceneTitle }: HeaderProps) {
                 setLanguageOpen(!languageOpen);
                 setThemeOpen(false);
               }}
-              className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold text-gray-500 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-700 hover:text-gray-800 dark:hover:text-gray-200 hover:shadow-sm transition-all"
+              className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
+              style={{
+                background: '#111122',
+                border: '1px solid rgba(255,255,255,0.08)',
+                color: '#888899',
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(124,58,237,0.15)')}
+              onMouseLeave={(e) => (e.currentTarget.style.background = '#111122')}
             >
               {locale === 'zh-CN' ? 'CN' : 'EN'}
             </button>
